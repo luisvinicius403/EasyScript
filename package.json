@@ -1,0 +1,16 @@
+{
+  "name": "easy-script",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node ./build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.2",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
