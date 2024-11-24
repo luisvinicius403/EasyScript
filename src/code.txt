@@ -1,0 +1,14 @@
+variable string nome = "João";
+variable integer idade = 20;
+variable integer contador = 0;
+
+if (idade >= 18) {
+  write("João é maior de idade.");
+} else {
+  write("João é menor de idade.");
+};
+
+do {
+  write("Tentativa número: " + contador);
+  contador = contador + 1;
+} while (contador < 3);

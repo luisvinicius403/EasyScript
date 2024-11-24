@@ -2,10 +2,12 @@
   "name": "easy-script",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "start": "node ./build"
+    "start": "node ./build",
+    "prettier": "npx prettier --write ."
   },
   "devDependencies": {
     "@types/node": "^22.8.2",
