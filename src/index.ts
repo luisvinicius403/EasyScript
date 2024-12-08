@@ -2,6 +2,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import { lexicalAnalyzer } from './analysis/lexical/index.js';
 import { syntaxAnalyzer } from './analysis/syntatic/index.js';
+import { semanticAnalyzer } from './analysis/semantic/index.js';
 
 // Read the code from code.txt
 fs.readFile('./src/code.txt', 'utf8', (err, code) => {
@@ -19,14 +20,21 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   // Print the tokens with line numbers
   console.log(`${chalk.magenta('Tokens Generated:')}\n`, tokens);
 
-  // Run the syntatic analysis
+  // Run the syntactic analysis
   const tree = syntaxAnalyzer(tokens);
 
-  /// Print the syntactic tree
+  // Print the syntactic tree
   console.log(`${chalk.magenta('\nSyntactic Tree:')}`);
   printAST(tree);
+
+  // Run the semantic analysis
+  const variableScope = semanticAnalyzer(tree);
+
+  // Print the variable scope table
+  console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, variableScope);
 });
 
+// Function to print the AST
 const printAST = (node: any, depth: number = 0): void => {
   const indent = '│   '.repeat(depth);
   const nodeLabel = node.value ? `${node.type}: ${node.value}` : `${node.type}`;
