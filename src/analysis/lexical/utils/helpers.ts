@@ -15,7 +15,7 @@ export const processWordOrIdentifier = (
   code: string,
   currentPosition: number,
   tokens: Token[],
-  line: number
+  line: number,
 ): number => {
   let lexeme = '';
   let character = code[currentPosition];
@@ -38,7 +38,7 @@ export const processNumber = (
   code: string,
   currentPosition: number,
   tokens: Token[],
-  line: number
+  line: number,
 ): number => {
   let lexeme = '';
   let character = code[currentPosition];
@@ -63,7 +63,7 @@ export const processString = (
   code: string,
   currentPosition: number,
   tokens: Token[],
-  line: number
+  line: number,
 ): number => {
   let lexeme = '';
   let character = code[currentPosition];
@@ -96,7 +96,7 @@ export const processOperator = (
   code: string,
   currentPosition: number,
   tokens: Token[],
-  line: number
+  line: number,
 ): number => {
   const twoCharOperator = code.slice(currentPosition, currentPosition + 2);
   const operator = operators.find((op) => op.keyword === twoCharOperator);
@@ -122,7 +122,7 @@ export const processDelimiter = (
   code: string,
   currentPosition: number,
   tokens: Token[],
-  line: number
+  line: number,
 ): number => {
   const lexeme = code[currentPosition];
   const delimiter = delimiters.find((delim) => delim.keyword === lexeme);

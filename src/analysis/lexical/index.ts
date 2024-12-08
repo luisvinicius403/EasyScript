@@ -1,12 +1,12 @@
-import { 
-  isWhitespace, 
-  isLetter, 
-  isDigit, 
-  processWordOrIdentifier, 
-  processNumber, 
-  processOperator, 
-  processDelimiter, 
-  processString 
+import {
+  isWhitespace,
+  isLetter,
+  isDigit,
+  processWordOrIdentifier,
+  processNumber,
+  processOperator,
+  processDelimiter,
+  processString,
 } from './utils/helpers.js';
 
 export type Token = {
@@ -48,27 +48,52 @@ export const lexicalAnalyzer = (code: string): Token[] => {
 
     // Process keywords or identifiers
     if (isLetter(character)) {
-      currentPosition = processWordOrIdentifier(code, currentPosition, tokens, currentLine);
+      currentPosition = processWordOrIdentifier(
+        code,
+        currentPosition,
+        tokens,
+        currentLine,
+      );
       continue;
     }
 
     // Process numbers (integers or decimals)
     if (isDigit(character)) {
-      currentPosition = processNumber(code, currentPosition, tokens, currentLine);
+      currentPosition = processNumber(
+        code,
+        currentPosition,
+        tokens,
+        currentLine,
+      );
       continue;
     }
 
     // Process strings
     if (character === '"') {
-      currentPosition = processString(code, currentPosition, tokens, currentLine);
+      currentPosition = processString(
+        code,
+        currentPosition,
+        tokens,
+        currentLine,
+      );
       continue;
     }
 
     // Process operators
-    currentPosition = processOperator(code, currentPosition, tokens, currentLine);
+    currentPosition = processOperator(
+      code,
+      currentPosition,
+      tokens,
+      currentLine,
+    );
 
     // Process delimiters
-    currentPosition = processDelimiter(code, currentPosition, tokens, currentLine);
+    currentPosition = processDelimiter(
+      code,
+      currentPosition,
+      tokens,
+      currentLine,
+    );
   }
 
   // Add EOF token to indicate end of the file
