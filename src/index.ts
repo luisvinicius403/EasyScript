@@ -22,6 +22,17 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   // Run the syntatic analysis
   const tree = syntaxAnalyzer(tokens);
 
-  // Print the syntatic tree
-  console.log(`${chalk.magenta('\nSyntatic Tree:')}\n`, tree);
+  /// Print the syntactic tree
+  console.log(`${chalk.magenta('\nSyntactic Tree:')}`);
+  printAST(tree);
 });
+
+const printAST = (node: any, depth: number = 0): void => {
+  const indent = '│   '.repeat(depth);
+  const nodeLabel = node.value ? `${node.type}: ${node.value}` : `${node.type}`;
+  console.log(`${indent}├── ${nodeLabel}`);
+
+  if (node.children && node.children.length > 0) {
+    node.children.forEach((child: any) => printAST(child, depth + 1));
+  }
+};

@@ -122,26 +122,28 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
     const condition = parseCondition();
     consume('DELIMITER'); // ")"
     consume('DELIMITER'); // "{"
-    
+  
     const ifCommands = [];
+    // Consumir todos os comandos dentro do bloco "if"
     while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
       ifCommands.push(parseCommand());
     }
-    
+  
     consume('DELIMITER'); // "}"
-    
+  
     let elseCommands = [];
     if (peek().lexeme === 'else') {
       consume('KEYWORD'); // "else"
       consume('DELIMITER'); // "{"
+      // Consumir todos os comandos dentro do bloco "else"
       while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
         elseCommands.push(parseCommand());
       }
       consume('DELIMITER'); // "}"
     }
-    
+  
     consume('DELIMITER'); // Expect the semicolon after the block
-    
+  
     return {
       type: 'IfElse',
       children: [
@@ -151,6 +153,7 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
       ],
     };
   };
+  
 
   // Function to parse a condition (left operator right)
   const parseCondition = (): ASTNode => {
@@ -172,24 +175,27 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
 
   // Function to parse an expression (term + term)
   const parseExpression = (): ASTNode => {
-    const term = parseTerm();
+    const left = parseTerm();
+  
+    // Loop para lidar com "+" e "-" (operadores de adição e subtração)
     while (
       peek().type === 'OPERATOR' &&
       (peek().lexeme === '+' || peek().lexeme === '-')
     ) {
       const operator = consume('OPERATOR');
-      const nextTerm = parseTerm();
+      const right = parseTerm();
       return {
         type: 'Expression',
         children: [
-          term,
+          left,
           { type: 'Operator', value: operator.lexeme },
-          nextTerm,
+          right,
         ],
       };
     }
-    return term;
-  };
+  
+    return left; // Caso a expressão tenha apenas um termo
+  };  
 
   // Function to parse a term (factor * factor)
   const parseTerm = (): ASTNode => {
@@ -302,33 +308,30 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
   };
 
   // Function to parse a do-while loop
-const parseDoWhileLoop = (): ASTNode => {
+  const parseDoWhileLoop = (): ASTNode => {
     consume('KEYWORD'); // "do"
     consume('DELIMITER'); // "{"
-    
+  
     const commands = [];
-    // Coletar comandos até encontrar o "while"
-    while (peek().type !== 'KEYWORD' || peek().lexeme !== 'while') {
+    while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
       commands.push(parseCommand());
     }
   
-    consume('DELIMITER'); // "}"
-    
+    consume('DELIMITER'); // "}" -> fechamento do bloco do-while
     consume('KEYWORD'); // "while"
     consume('DELIMITER'); // "("
-    const condition = parseCondition();
+    const condition = parseCondition(); // Condição do do-while
     consume('DELIMITER'); // ")"
-    
-    consume('DELIMITER'); // Espera o ponto e vírgula após o loop
-    
+    consume('DELIMITER'); // ";" -> ponto-e-vírgula que finaliza o while
+  
     return {
       type: 'DoWhileLoop',
       children: [
         { type: 'Commands', children: commands },
-        { type: 'Condition', children: [condition] }
+        { type: 'Condition', children: [condition] },
       ],
     };
-};
-  
+  };
+    
   return parseProgram();
 };
