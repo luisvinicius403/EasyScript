@@ -122,28 +122,26 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
     const condition = parseCondition();
     consume('DELIMITER'); // ")"
     consume('DELIMITER'); // "{"
-  
+    
     const ifCommands = [];
-    // Consumir todos os comandos dentro do bloco "if"
     while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
       ifCommands.push(parseCommand());
     }
-  
+    
     consume('DELIMITER'); // "}"
-  
+    
     let elseCommands = [];
     if (peek().lexeme === 'else') {
       consume('KEYWORD'); // "else"
       consume('DELIMITER'); // "{"
-      // Consumir todos os comandos dentro do bloco "else"
       while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
         elseCommands.push(parseCommand());
       }
       consume('DELIMITER'); // "}"
     }
-  
+    
     consume('DELIMITER'); // Expect the semicolon after the block
-  
+    
     return {
       type: 'IfElse',
       children: [
@@ -153,7 +151,6 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
       ],
     };
   };
-  
 
   // Function to parse a condition (left operator right)
   const parseCondition = (): ASTNode => {
@@ -175,27 +172,24 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
 
   // Function to parse an expression (term + term)
   const parseExpression = (): ASTNode => {
-    const left = parseTerm();
-  
-    // Loop para lidar com "+" e "-" (operadores de adição e subtração)
+    const term = parseTerm();
     while (
       peek().type === 'OPERATOR' &&
       (peek().lexeme === '+' || peek().lexeme === '-')
     ) {
       const operator = consume('OPERATOR');
-      const right = parseTerm();
+      const nextTerm = parseTerm();
       return {
         type: 'Expression',
         children: [
-          left,
+          term,
           { type: 'Operator', value: operator.lexeme },
-          right,
+          nextTerm,
         ],
       };
     }
-  
-    return left; // Caso a expressão tenha apenas um termo
-  };  
+    return term;
+  };
 
   // Function to parse a term (factor * factor)
   const parseTerm = (): ASTNode => {
