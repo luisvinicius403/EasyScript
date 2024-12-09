@@ -16,29 +16,21 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   // Print the source code
   console.log(`${chalk.magenta('Source Code Read:')}\n${code}\n`);
 
-  // Run the lexical analysis
+  // Run the lexical analysis and print the tokens
   const tokens = lexicalAnalyzer(code);
-
-  // Print the tokens with line numbers
   console.log(`${chalk.magenta('Tokens Generated:')}\n`, tokens);
 
-  // Run the syntactic analysis
+  // Run the syntactic analysis and print the syntactic tree
   const tree = syntaxAnalyzer(tokens);
-
-  // Print the syntactic tree
   console.log(`${chalk.magenta('\n\nSyntactic Tree:')}`);
   printAST(tree);
 
-  // Run the semantic analysis
-  const variableScope = semanticAnalyzer(tree);
-
-  // Print the variable scope table
+  // Run the semantic analysis and print the variable scope table
+  const variableScope = semanticAnalyzer(tree); 
   console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, variableScope);
 
-  // Run the JavaScript generation
+  // Run the JavaScript generation and print the code
   const javaScript = generateJavaScript(tree);
-
-  // Print the JavaScript code
   console.log(
     `${chalk.magenta('\n\nGenerated JavaScript Code:')}\n`,
     javaScript,
