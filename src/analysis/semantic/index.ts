@@ -40,12 +40,14 @@ export const semanticAnalyzer = (ast: ASTNode): Scope[] => {
     if (node.type === 'Program') {
       // Initializes the global scope
       createNewScope();
-      node.children?.forEach(child => walkAST(child));
+      node.children?.forEach((child) => walkAST(child));
     }
 
     if (node.type === 'VariableDeclaration') {
-      const identifier = node.children?.find(child => child.type === 'Identifier');
-      const type = node.children?.find(child => child.type === 'Type');
+      const identifier = node.children?.find(
+        (child) => child.type === 'Identifier',
+      );
+      const type = node.children?.find((child) => child.type === 'Type');
 
       if (identifier && type && identifier.value && type.value) {
         addVariableToScope(identifier.value, type.value);
@@ -55,10 +57,14 @@ export const semanticAnalyzer = (ast: ASTNode): Scope[] => {
     }
 
     if (node.type === 'Assignment') {
-      const identifier = node.children?.find(child => child.type === 'Identifier');
+      const identifier = node.children?.find(
+        (child) => child.type === 'Identifier',
+      );
       if (identifier && identifier.value) {
         if (!checkVariableInScopes(identifier.value)) {
-          throw new Error(`Semantic error: Variable '${identifier.value}' is not declared.`);
+          throw new Error(
+            `Semantic error: Variable '${identifier.value}' is not declared.`,
+          );
         }
       }
     }
@@ -67,12 +73,12 @@ export const semanticAnalyzer = (ast: ASTNode): Scope[] => {
       // Enters a new scope for blocks (e.g., if, while, etc.)
       currentScopeLevel++;
       createNewScope();
-      node.children?.forEach(child => walkAST(child));
+      node.children?.forEach((child) => walkAST(child));
       currentScopeLevel--; // Exits the scope at the end of the block
     }
 
     if (node.children) {
-      node.children.forEach(child => walkAST(child));
+      node.children.forEach((child) => walkAST(child));
     }
   };
 

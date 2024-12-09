@@ -1,8 +1,10 @@
 import fs from 'fs';
 import chalk from 'chalk';
+import vm from 'vm';
 import { lexicalAnalyzer } from './analysis/lexical/index.js';
 import { syntaxAnalyzer } from './analysis/syntatic/index.js';
 import { semanticAnalyzer } from './analysis/semantic/index.js';
+import { generateJavaScript } from './generation/index.js';
 
 // Read the code from code.txt
 fs.readFile('./src/code.txt', 'utf8', (err, code) => {
@@ -12,7 +14,7 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   }
 
   // Print the source code
-  console.log(`${chalk.magenta('Source Code Read:')}\n${code}\n\n`);
+  console.log(`${chalk.magenta('Source Code Read:')}\n${code}\n`);
 
   // Run the lexical analysis
   const tokens = lexicalAnalyzer(code);
@@ -24,7 +26,7 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   const tree = syntaxAnalyzer(tokens);
 
   // Print the syntactic tree
-  console.log(`${chalk.magenta('\nSyntactic Tree:')}`);
+  console.log(`${chalk.magenta('\n\nSyntactic Tree:')}`);
   printAST(tree);
 
   // Run the semantic analysis
@@ -32,6 +34,20 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
 
   // Print the variable scope table
   console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, variableScope);
+
+  // Run the JavaScript generation
+  const javaScript = generateJavaScript(tree);
+
+  // Print the JavaScript code
+  console.log(
+    `${chalk.magenta('\n\nGenerated JavaScript Code:')}\n`,
+    javaScript,
+  );
+
+  // Run JavaScript code
+  const jsCode = javaScript;
+  console.log(`${chalk.magenta('\n\nOutput:')}`);
+  vm.runInNewContext(jsCode, { console });
 });
 
 // Function to print the AST

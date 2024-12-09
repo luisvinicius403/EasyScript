@@ -91,7 +91,7 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
   // Function to parse a command (if, while, etc.)
   const parseCommand = (): ASTNode => {
     const token = peek();
-  
+
     if (token.type === 'KEYWORD') {
       if (token.lexeme === 'if') {
         return parseConditionalDeclaration();
@@ -105,16 +105,16 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
       if (token.lexeme === 'read') return parseRead();
       if (token.lexeme === 'write') return parseWrite();
     }
-  
+
     if (token.type === 'IDENTIFIER') {
       return parseAssignment();
     }
-  
+
     throw new Error(
       `Syntax error at line ${token.line}: unexpected command (${token.lexeme})`,
     );
   };
-  
+
   // Function to parse an if statement
   const parseConditionalDeclaration = (): ASTNode => {
     consume('KEYWORD'); // "if"
@@ -122,14 +122,14 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
     const condition = parseCondition();
     consume('DELIMITER'); // ")"
     consume('DELIMITER'); // "{"
-    
+
     const ifCommands = [];
     while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
       ifCommands.push(parseCommand());
     }
-    
+
     consume('DELIMITER'); // "}"
-    
+
     let elseCommands = [];
     if (peek().lexeme === 'else') {
       consume('KEYWORD'); // "else"
@@ -139,9 +139,9 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
       }
       consume('DELIMITER'); // "}"
     }
-    
+
     consume('DELIMITER'); // Expect the semicolon after the block
-    
+
     return {
       type: 'IfElse',
       children: [
@@ -305,19 +305,19 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
   const parseDoWhileLoop = (): ASTNode => {
     consume('KEYWORD'); // "do"
     consume('DELIMITER'); // "{"
-  
+
     const commands = [];
     while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
       commands.push(parseCommand());
     }
-  
+
     consume('DELIMITER'); // "}" -> fechamento do bloco do-while
     consume('KEYWORD'); // "while"
     consume('DELIMITER'); // "("
     const condition = parseCondition(); // Condição do do-while
     consume('DELIMITER'); // ")"
     consume('DELIMITER'); // ";" -> ponto-e-vírgula que finaliza o while
-  
+
     return {
       type: 'DoWhileLoop',
       children: [
@@ -326,6 +326,6 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
       ],
     };
   };
-    
+
   return parseProgram();
 };
