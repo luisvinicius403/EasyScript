@@ -36,7 +36,7 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, variableScope);
 
   // Run the JavaScript generation
-  const javaScript = generateJavaScript(tree)
+  const javaScript = generateJavaScript(tree);
 
   // Print the JavaScript code
   console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, javaScript);
