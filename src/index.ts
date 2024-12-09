@@ -1,6 +1,6 @@
 import fs from 'fs';
 import chalk from 'chalk';
-
+import vm from 'vm';
 import { lexicalAnalyzer } from './analysis/lexical/index.js';
 import { syntaxAnalyzer } from './analysis/syntatic/index.js';
 import { semanticAnalyzer } from './analysis/semantic/index.js';
@@ -39,10 +39,15 @@ fs.readFile('./src/code.txt', 'utf8', (err, code) => {
   const javaScript = generateJavaScript(tree);
 
   // Print the JavaScript code
-  console.log(`${chalk.magenta('\n\nVariable Scope Table:')}\n`, javaScript);
+  console.log(
+    `${chalk.magenta('\n\nGenerated JavaScript Code:')}\n`,
+    javaScript,
+  );
 
   // Run JavaScript code
   const jsCode = javaScript;
+  console.log(`${chalk.magenta('\n\nOutput:')}`);
+  vm.runInNewContext(jsCode, { console });
 });
 
 // Function to print the AST
