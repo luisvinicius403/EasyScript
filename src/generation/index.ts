@@ -15,15 +15,7 @@ export const generateJavaScript = (node: ASTNode): string => {
         ''
       );
 
-    case 'Declarations':
-      // Process declaration nodes recursively
-      return (
-        node.children?.map((child) => generateJavaScript(child)).join('\n') ||
-        ''
-      );
-
     case 'VariableDeclaration': {
-      // Variable declaration
       const identifier = node.children?.find(
         (child) => child.type === 'Identifier',
       )?.value;
@@ -34,7 +26,6 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'Assignment': {
-      // Variable assignment
       const identifier = node.children?.find(
         (child) => child.type === 'Identifier',
       )?.value;
@@ -47,7 +38,6 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'IfElse': {
-      // If-else conditional
       const condition = node.children?.find(
         (child) => child.type === 'Condition',
       );
@@ -71,8 +61,20 @@ export const generateJavaScript = (node: ASTNode): string => {
       return `if (${jsCondition}) {\n${jsIfCommands}\n}${jsElseCommands ? ` else {\n${jsElseCommands}\n}` : ''}`;
     }
 
+    case 'WhileLoop': {
+      // While loop
+      const condition = node.children?.find((child) => child.type === 'Condition');
+      const commands = node.children?.find((child) => child.type === 'Commands');
+
+      const jsCondition = condition ? generateJavaScript(condition) : '';
+      const jsCommands =
+        commands?.children?.map((child) => generateJavaScript(child)).join('\n') ||
+        '';
+
+      return `while (${jsCondition}) {\n${jsCommands}\n}`;
+    }
+
     case 'DoWhileLoop': {
-      // Do-while loop
       const commands = node.children?.find(
         (child) => child.type === 'Commands',
       );
@@ -90,7 +92,6 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'Condition': {
-      // Conditional expression
       const left = node.children?.[0]
         ? generateJavaScript(node.children[0])
         : '';
@@ -103,7 +104,6 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'Expression': {
-      // Expressions
       const left = node.children?.[0]
         ? generateJavaScript(node.children[0])
         : '';
@@ -116,7 +116,6 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'Write': {
-      // Write function (console.log)
       const expressionNode = node.children?.find(
         (child) => child.type === 'Expression',
       );
@@ -136,23 +135,18 @@ export const generateJavaScript = (node: ASTNode): string => {
     }
 
     case 'Type':
-      // Return the type directly
       return node.value || '';
 
     case 'Identifier':
-      // Identifiers
       return node.value || '';
 
     case 'String':
-      // Add quotes around strings
       return `${node.value}`;
 
     case 'Number':
-      // Return numbers directly
       return node.value || '';
 
     case 'Value':
-      // Generic value handler
       return node.value || '';
 
     default:

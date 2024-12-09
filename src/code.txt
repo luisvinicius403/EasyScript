@@ -2,6 +2,10 @@ variable string nome = "João";
 variable integer idade = 20;
 variable integer contador = 0;
 
+while (nome != "João") {
+  write("Usuário não cadastrado: " + nome);
+};
+
 if (idade >= 18) {
   write("João é maior de idade.");
 } else {

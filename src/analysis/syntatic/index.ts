@@ -89,31 +89,38 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
   };
 
   // Function to parse a command (if, while, etc.)
-  const parseCommand = (): ASTNode => {
-    const token = peek();
+  // Function to parse a command (if, while, etc.)
+const parseCommand = (): ASTNode => {
+  const token = peek();
 
-    if (token.type === 'KEYWORD') {
-      if (token.lexeme === 'if') {
-        return parseConditionalDeclaration();
-      }
-      if (token.lexeme === 'while') {
-        return parseWhileLoop();
-      }
-      if (token.lexeme === 'do') {
-        return parseDoWhileLoop();
-      }
-      if (token.lexeme === 'read') return parseRead();
-      if (token.lexeme === 'write') return parseWrite();
+  if (token.type === 'KEYWORD') {
+    if (token.lexeme === 'if') {
+      return parseConditionalDeclaration();
     }
-
-    if (token.type === 'IDENTIFIER') {
-      return parseAssignment();
+    if (token.lexeme === 'while') {
+      return parseWhileLoop();
     }
+    if (token.lexeme === 'do') {
+      return parseDoWhileLoop();
+    }
+    if (token.lexeme === 'read') return parseRead();
+    if (token.lexeme === 'write') return parseWrite();
+  }
 
-    throw new Error(
-      `Syntax error at line ${token.line}: unexpected command (${token.lexeme})`,
-    );
-  };
+  if (token.type === 'IDENTIFIER') {
+    return parseAssignment();
+  }
+
+  // Handle optional semicolon after blocks
+  if (token.type === 'DELIMITER' && token.lexeme === ';') {
+    consume('DELIMITER'); // Consume the unnecessary semicolon
+    return parseCommand(); // Continue parsing the next command
+  }
+
+  throw new Error(
+    `Syntax error at line ${token.line}: unexpected command (${token.lexeme})`,
+  );
+};
 
   // Function to parse an if statement
   const parseConditionalDeclaration = (): ASTNode => {
@@ -280,26 +287,35 @@ export const syntaxAnalyzer = (tokens: Token[]): ASTNode => {
   };
 
   // Function to parse a while loop
-  const parseWhileLoop = (): ASTNode => {
-    consume('KEYWORD'); // "while"
-    consume('DELIMITER'); // "("
-    const condition = parseCondition();
-    consume('DELIMITER'); // ")"
-    consume('DELIMITER'); // "{"
-    const commands = [];
-    while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
-      commands.push(parseCommand());
-    }
-    consume('DELIMITER'); // "}"
+  // Function to parse a while loop
+const parseWhileLoop = (): ASTNode => {
+  consume('KEYWORD'); // "while"
+  consume('DELIMITER'); // "("
+  const condition = parseCondition();
+  consume('DELIMITER'); // ")"
+  consume('DELIMITER'); // "{"
 
-    return {
-      type: 'WhileLoop',
-      children: [
-        { type: 'Condition', children: [condition] },
-        { type: 'Commands', children: commands },
-      ],
-    };
+  const commands = [];
+  while (peek().type !== 'DELIMITER' || peek().lexeme !== '}') {
+    commands.push(parseCommand());
+  }
+
+  consume('DELIMITER'); // "}"
+
+  // Optional semicolon after the while block
+  if (peek().type === 'DELIMITER' && peek().lexeme === ';') {
+    consume('DELIMITER'); // Consume the optional semicolon
+  }
+
+  return {
+    type: 'WhileLoop',
+    children: [
+      { type: 'Condition', children: [condition] },
+      { type: 'Commands', children: commands },
+    ],
   };
+};
+
 
   // Function to parse a do-while loop
   const parseDoWhileLoop = (): ASTNode => {
