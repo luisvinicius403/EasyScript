@@ -7,9 +7,9 @@ while (nome != "João") {
 };
 
 if (idade >= 18) {
-  write("João é maior de idade.");
+  write(nome + " é maior de idade.");
 } else {
-  write("João é menor de idade.");
+  write(nome + " é menor de idade.");
 };
 
 do {
